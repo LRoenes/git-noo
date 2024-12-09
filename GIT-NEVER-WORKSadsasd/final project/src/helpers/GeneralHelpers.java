@@ -274,7 +274,7 @@ public class GeneralHelpers {
 
     //delete info command
 
-    public static void deleteInfo(ArrayList<String> query){
+    public static void deleteInfo(ArrayList<String> query) {
 
         String nameofTable = query.get(2);
         String UserDelete = query.get(3);
@@ -283,96 +283,118 @@ public class GeneralHelpers {
         File[] fileDirectory = directory.listFiles();
         File sourceFile = new File(path + nameofTable + ".csv");
         int indexOfArray = 0;
-
-        
-  
+    
         for (int i = 0; i < fileDirectory.length; i++) {
-
-            if(fileDirectory[i].getName().equalsIgnoreCase(nameofTable + ".csv")){
-
+    
+            if (fileDirectory[i].getName().equalsIgnoreCase(nameofTable + ".csv")) {
+    
                 try {
-                        
-                    Scanner scanner = new Scanner(sourceFile);  
+    
+                    Scanner scanner = new Scanner(sourceFile);
                     String headline = scanner.nextLine();
                     System.out.println(headline);
                     String[] Columns = headline.split(",");
                     int AmountofColumns = Columns.length;
                     List<String>[] ColumnArray = new List[AmountofColumns];
-
-                    for(int j = 0; j<AmountofColumns; j++){
+    
+                    for (int j = 0; j < AmountofColumns; j++) {
                         ColumnArray[j] = new ArrayList<>();
-                        
                     }
-
-                    while(scanner.hasNextLine()){
-
+    
+                    while (scanner.hasNextLine()) {
+    
                         String lines = scanner.nextLine();
                         System.out.println(lines);
                         String[] rowData = lines.split(",");
-                        
-                        if(rowData.length == AmountofColumns){
-
-                            for(int x = 0; x < AmountofColumns; x++){
+    
+                        if (rowData.length == AmountofColumns) {
+    
+                            for (int x = 0; x < AmountofColumns; x++) {
                                 ColumnArray[x].add(rowData[x].trim());
                             }
-                        
-                        }else{
-
+    
+                        } else {
+    
                             System.out.println("Skipping invalid line");
-
+    
                         }
-
+    
                     }
-
-                    for(int m = 0; m < ColumnArray.length; m++){
-
-                        for(int l = 0; l < Columns.length; l++){
-
-                            if(query.get(4).equalsIgnoreCase(Columns[l])){
-
+    
+                    for (int m = 0; m < ColumnArray.length; m++) {
+    
+                        for (int l = 0; l < Columns.length; l++) {
+    
+                            if (query.get(4).equalsIgnoreCase(Columns[l])) {
+    
                                 indexOfArray = l;
-
+    
                             }
-
+    
                         }
-
+    
                         System.out.println(ColumnArray[indexOfArray]);
-
-                        for(int u = 0; u < ColumnArray[indexOfArray].size(); u++){
-
-                            if(ColumnArray[indexOfArray].get(m).equalsIgnoreCase(query.get(5))){
-
+    
+                        for (int u = 0; u < ColumnArray[indexOfArray].size(); u++) {
+    
+                            if (ColumnArray[indexOfArray].get(u).equalsIgnoreCase(query.get(5))) {
+    
                                 System.out.println("Found item you want to delete");
     
-                            }
-
-                          
-
-                        }  
-
-                        break;
-                       
-                    }
-
-
-                    scanner.close();
-
-
-                } catch (Exception e) {
-                    // TODO: handle exception
-                }
-
-
-
-            } 
-
-
-        }
-
-
-    }
+                                for (int o = 0; o < ColumnArray.length; o++) {
     
+                                    ColumnArray[o].remove(u);
+                                    System.out.println(ColumnArray[o]);
+    
+                                }
+                                break;
+                            }
+                        }
+                    }
+    
+                    scanner.close();
+    
+                  
+                    StringBuilder updatedContent = new StringBuilder();
+    
+                  
+                    for (int j = 0; j < Columns.length; j++) {
+                        updatedContent.append(Columns[j]);
+                        if (j < Columns.length - 1) {
+                            updatedContent.append(",");
+                        }
+                    }
+                    updatedContent.append("\n");
+    
+                    
+                    int numberOfRows = ColumnArray[0].size();
+                    for (int rowIndex = 0; rowIndex < numberOfRows; rowIndex++) {
+                        for (int colIndex = 0; colIndex < ColumnArray.length; colIndex++) {
+                            updatedContent.append(ColumnArray[colIndex].get(rowIndex));
+                            if (colIndex < ColumnArray.length - 1) {
+                                updatedContent.append(",");
+                            }
+                        }
+                        updatedContent.append("\n");
+                    }
+                    
+               
+                    try (FileWriter writer = new FileWriter(sourceFile)) {
+                        writer.write(updatedContent.toString());
+                        System.out.println("File updated successfully.");
+                    } catch (IOException e) {
+                        System.err.println("Error writing to file: " + e.getMessage());
+                    }
+    
+                } catch (Exception e) {
+                    System.err.println("Error processing file: " + e.getMessage());
+                }
+    
+            }
+        }
+    }
+        
+           
        
-   
-
-}
+    
+    }
